@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block page_content %}
+<hr>
+<div class="row">
+    <div class="intro">
+        
+        <h1>Hello! Welcome !</h1>
+        Currently I am a student stuyding the Dilpoma in IT at Ngee Ann Polytechnic<br>
+
+        <p>I am a piano teacher!</p>
+        <p>My hobbies are eating and sleeping :)</p>
+        <p>I love travelling too!</p>
+    </div>
+    <div class="row">
+        {% for project in projects %}
+        <div class="col-md-4">
+
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
