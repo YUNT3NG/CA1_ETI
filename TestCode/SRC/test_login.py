@@ -4,6 +4,8 @@ import unittest
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
 
 driver = webdriver.Safari()
 
@@ -77,11 +79,13 @@ def update(user, FName, LName, email):
 
     return True
 
-def updatePassword(passwrd1, passwrd2):
-    pass1 = driver.find_element_by_name("password1")
+def updatePassword(oldpass,passwrd1, passwrd2):
+    oldpass = driver.find_element(By.XPATH, "//body/div/div[3]/div/form/div/fieldset/div[1]/input")
+    oldpass.send_keys(oldpass)
+    pass1 = driver.find_element(By.XPATH, "//body/div/div[3]/div/form/div/fieldset/div[2]/input")
     # pass1.clear()
     pass1.send_keys(passwrd1)
-    pass2 = driver.find_element_by_name("password2")
+    pass2 = driver.find_element(By.XPATH, "//body/div/div[3]/div/form/div/fieldset/div[3]/input")
     # pass2.clear()
     pass2.send_keys(passwrd2)
     pass2.send_keys(Keys.RETURN)
@@ -246,7 +250,15 @@ def test_createInvalidPW_Numerical():
     assert "Please correct the error below." in driver.page_source
     time.sleep(1)
     driver.close()
-
+#doesnt work
+def test_updatePassword():
+    login("user1", "user1user1")
+    driver.get("http://localhost:8000/admin/password_change/")
+    time.sleep(1)
+    updatePassword("user1user1","user2user2","user2user2")
+    time.sleep(1)
+    assert "Password change successful" in driver.page_source
+    time.sleep(1)
 #doesnt work
 '''
 def test_create_valid_post():
