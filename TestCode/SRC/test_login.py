@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 
 driver = webdriver.Safari()
 
-#functions that are used throughout
+#functions to be used again
 def login(name, passwrd):
     driver.delete_all_cookies()
     driver.get("http://localhost:8000/admin/login/?next=/admin/")
@@ -19,7 +19,6 @@ def login(name, passwrd):
     time.sleep(1)
     return True
 
-#####TESTS#####
 @pytest.mark.parametrize("adminpage", [
 ("http://localhost:8000/admin/"),
 ("http://localhost:8000/admin/auth/group/"),
