@@ -19,6 +19,64 @@ def login(name, passwrd):
     time.sleep(1)
     return True
 
+def comment_input(author, body):
+    driver.get("http://localhost:8000/blog/3/")
+    driver.find_element_by_name("author").send_keys(author)
+    driver.find_element_by_name("body").send_keys(body)
+    driver.find_element_by_css_selector('button.btn.btn-primary').click()
+    time.sleep(1)
+    return True
+
+def edituserinfo(name, passwrd, confirmpasswrd):
+    username = driver.find_element_by_name("username")
+    username.clear()
+    username.send_keys(name)
+
+    password = driver.find_element_by_name("password1")
+    password.clear()
+    password.send_keys(passwrd)
+
+    password1 = driver.find_element_by_name("password2")
+    password1.clear()
+    password1.send_keys(confirmpasswrd)
+    time.sleep(1)
+
+    return True
+
+def update(user, FName, LName, email):
+
+    username = driver.find_element_by_name("username")
+    username.clear()
+    username.send_keys(user)
+
+    first = driver.find_element_by_name("first_name")
+    first.clear()
+    first.send_keys(FName)
+
+    last = driver.find_element_by_name("last_name")
+    last.clear()
+    last.send_keys(LName)
+
+    mail = driver.find_element_by_name("email")
+    mail.clear()
+    mail.send_keys(email)
+
+    driver.find_element_by_name("_save").click()
+    time.sleep(1)
+
+    return True
+
+def updatePassword(passwrd1, passwrd2):
+    pass1 = driver.find_element_by_name("password1")
+    # pass1.clear()
+    pass1.send_keys(passwrd1)
+    pass2 = driver.find_element_by_name("password2")
+    # pass2.clear()
+    pass2.send_keys(passwrd2)
+    pass2.send_keys(Keys.RETURN)
+    time.sleep(1)
+
+
 @pytest.mark.parametrize("adminpage", [
 ("http://localhost:8000/admin/"),
 ("http://localhost:8000/admin/auth/group/"),
@@ -76,5 +134,87 @@ def test_logout():
     time.sleep(1)
     driver.get("http://localhost:8000/admin/logout/")
     assert "Thanks for spending some quality time with the Web site today." in driver.page_source
-    driver.close()
+    #driver.close()
     
+#test comments
+
+def test_create_comment_valid():
+    comment_input("Commentor 1", "ETI is hard")
+    assert "ETI is hard" in driver.page_source
+    time.sleep(1)
+
+
+def test_invalid_author_blank():
+    comment_input("", "no author")
+    assert "Fill out this fields" in driver.page_source
+    time.sleep(1)
+
+def test_invalid_body_blank():
+    comment_input("no body", "")
+    assert "Fill out this fields" in driver.page_source
+    time.sleep(1)
+
+def test_invalid_all_blank():
+    comment_input("", "")
+    assert "Fill out this fields" in driver.page_source
+    time.sleep(1)
+    #driver.close()
+
+#create new user
+def test_createNewUser_NewUsername():
+    login("yunteng", "19V38r00")
+    driver.get("http://localhost:8000/admin/auth/user/add/")
+    time.sleep(1)
+    edituserinfo("newuser1", "B3stpass!", "B3stpass!")
+    driver.find_element_by_name("_save").click()
+    time.sleep(1)
+    assert "was added successfully. You may edit it again below." in driver.page_source
+    time.sleep(1)
+
+def test_createNU_ExistingUsername():
+    driver.get("http://localhost:8000/admin/auth/user/add/")
+    time.sleep(1)
+    edituserinfo("yunteng", "B3stpass!", "B3stpass!")
+    driver.find_element_by_name("_save").click()
+    time.sleep(1)
+    assert "Please correct the error below." in driver.page_source
+    time.sleep(1)
+    
+    
+
+def test_createInvalidPW_NotSame():
+    driver.get("http://localhost:8000/admin/auth/user/add/")
+    time.sleep(1)
+    edituserinfo("newuser2", "B3stpass!", "B3stpass!!!")
+    driver.find_element_by_name("_save").click()
+    time.sleep(1)
+    assert "Please correct the error below." in driver.page_source
+    time.sleep(1)
+
+def test_createInvalidPW_under8():
+    driver.get("http://localhost:8000/admin/auth/user/add/")
+    time.sleep(1)
+    edituserinfo("newuser2", "B3stpas", "B3stpas")
+    driver.find_element_by_name("_save").click()
+    time.sleep(1)
+    assert "Please correct the error below." in driver.page_source
+    time.sleep(1)
+
+def test_createInvalidPW_Common():
+    driver.get("http://localhost:8000/admin/auth/user/add/")
+    time.sleep(1)
+    edituserinfo("newuser2", "password", "password")
+    driver.find_element_by_name("_save").click()
+    time.sleep(1)
+    assert "Please correct the error below." in driver.page_source
+    time.sleep(1)
+
+def test_createInvalidPW_Numerical():
+    driver.get("http://localhost:8000/admin/auth/user/add/")
+    time.sleep(1)
+    edituserinfo("newuser2", "12345678", "12345678")
+    driver.find_element_by_name("_save").click()
+    time.sleep(1)
+    assert "Please correct the error below." in driver.page_source
+    time.sleep(1)
+    driver.close()
